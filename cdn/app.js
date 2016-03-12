@@ -7,6 +7,12 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var logger = require('./utilities/logger.js');
+
+var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+//Fetching config based on environment
+config = require('./config/config.js')[env];
 
 var app = express();
 
@@ -16,7 +22,7 @@ app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -57,9 +63,11 @@ app.use(function(err, req, res, next) {
 });
 
 
-//module.exports = app;
+var port = process.env.PORT || config.applicationPort,
+    bootMessage = config.bootMessage;
 
-app.listen(3500,function()
-{
-console.log('server started');
+//Server Start     
+app.listen(port, function() {
+    logger.info('%s on Port: %s ', bootMessage, port);
+    logger.info('Running Configuration as "' + env + '"');
 });
